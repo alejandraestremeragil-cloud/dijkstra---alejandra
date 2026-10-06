@@ -1,10 +1,5 @@
 import heapq
 
-
-# =========================
-# GRAFO
-# =========================
-
 grafo = {
     'S': {'A': 5, 'N': 4, 'C': 2},
     'A': {'S': 5, 'G': 9},
@@ -34,10 +29,6 @@ grafo = {
     'J': {'T': 9}
 }
 
-
-# =========================
-# DIJKSTRA
-# =========================
 
 def dijkstra(grafo, inicio, destino):
 
@@ -72,10 +63,6 @@ def dijkstra(grafo, inicio, destino):
     return float('inf'), []
 
 
-# =========================
-# PEDIDOS
-# =========================
-
 pedidos = [
 
     {
@@ -105,19 +92,14 @@ pedidos = [
 ]
 
 
-# =========================
 # RECORRIDO DEL EJERCICIO
-# =========================
-
 coste_total = 0
 
-print("\n========== INICIO ==========")
+print("\n INICIO ")
 print("Salimos desde S\n")
 
 
-# -------------------------
 # S -> F
-# -------------------------
 
 coste, ruta = dijkstra(grafo, "S", "F")
 coste_total += coste
@@ -138,9 +120,7 @@ for p in pedidos:
     print(f"{p['nombre']} --> {p['estado']}")
 
 
-# -------------------------
 # F -> E
-# -------------------------
 
 coste, ruta = dijkstra(grafo, "F", "E")
 coste_total += coste
@@ -163,9 +143,8 @@ for p in pedidos:
     print(f"{p['nombre']} --> {p['estado']}")
 
 
-# -------------------------
 # E -> T
-# -------------------------
+
 
 coste, ruta = dijkstra(grafo, "E", "T")
 coste_total += coste
@@ -199,9 +178,7 @@ for p in pedidos:
     print(f"{p['nombre']} --> {p['estado']}")
 
 
-# -------------------------
 # T -> D
-# -------------------------
 
 coste, ruta = dijkstra(grafo, "T", "D")
 coste_total += coste
@@ -220,7 +197,7 @@ for pedido in pedidos:
         print(f"\nEntregado {pedido['nombre']}")
         print("Productos:", pedido["productos"])
 
-print("\n========== FINAL ==========")
+print("\n FINAL ")
 
 for p in pedidos:
     print(f"{p['nombre']} --> {p['estado']}")
