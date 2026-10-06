@@ -1,89 +1,87 @@
 import heapq
 
-# Grafo del ejercicio 2
-# Cada conexión es bidireccional: (nodo, coste)
-
+# Grafo
 grafo = {
-    "A": {"N": 5, "G": 9},
-    "B": {"S": 4, "N": 4, "C": 1, "D": 5, "I": 3},
-    "C": {"S": 2, "B": 1, "D": 8, "F": 8, "E": 10, "P": 21},
-    "D": {"B": 5, "O": 13, "T": 6, "E": 2, "C": 8},
-    "E": {"D": 2, "T": 2, "F": 12, "P": 10, "L": 7},
-    "F": {"I": 7, "C": 8, "E": 12},
-    "G": {"A": 9},
-    "H": {},
-    "I": {"B": 3, "F": 7},
-    "J": {"T": 9},
-    "K": {},
-    "L": {"E": 7},
-    "M": {},
-    "N": {"A": 5, "B": 4, "Q": 4},
-    "O": {"Q": 7, "D": 13},
-    "P": {"C": 21, "E": 10},
-    "Q": {"N": 4, "O": 7},
-    "R": {},
-    "S": {"B": 4, "C": 2},
-    "T": {"D": 6, "E": 2, "J": 9}
+    'S': {'A': 5, 'N': 4, 'C': 2},
+    'A': {'S': 5, 'G': 9},
+    'G': {'A': 9},
+
+    'N': {'S': 4, 'B': 4},
+    'B': {'N': 4, 'C': 1, 'I': 3, 'D': 5},
+
+    'C': {'S': 2, 'B': 1, 'D': 8, 'E': 10, 'P': 21},
+
+    'I': {'B': 3, 'F': 7},
+
+    'F': {'I': 7, 'E': 12},
+
+    'D': {'B': 5, 'C': 8, 'Q': 7, 'O': 13, 'E': 2, 'T': 6},
+
+    'Q': {'D': 7},
+
+    'O': {'D': 13},
+
+    'E': {'D': 2, 'F': 12, 'T': 2, 'P': 7},
+
+    'P': {'C': 21, 'E': 7},
+
+    'T': {'D': 6, 'E': 2, 'J': 9},
+
+    'J': {'T': 9}
 }
 
 
-def dijkstra(grafo, origen):
-    dist = {nodo: float("inf") for nodo in grafo}
-    anterior = {nodo: None for nodo in grafo}
-
-    dist[origen] = 0
-
-    cola = [(0, origen)]
+def dijkstra(grafo, inicio, destino):
+    cola = [(0, inicio, [])]
+    visitados = set()
 
     while cola:
-        distancia, nodo = heapq.heappop(cola)
+        coste, nodo, camino = heapq.heappop(cola)
 
-        # Si ya tenemos una distancia mejor, ignoramos esta
-        if distancia > dist[nodo]:
+        if nodo in visitados:
             continue
 
+        camino = camino + [nodo]
+        visitados.add(nodo)
+
+        if nodo == destino:
+            return coste, camino
+
         for vecino, peso in grafo[nodo].items():
-            nueva_distancia = distancia + peso
-
-            if nueva_distancia < dist[vecino]:
-                dist[vecino] = nueva_distancia
-                anterior[vecino] = nodo
-
+            if vecino not in visitados:
                 heapq.heappush(
                     cola,
-                    (nueva_distancia, vecino)
+                    (coste + peso, vecino, camino)
                 )
 
-    return dist, anterior
-
-distancias, anteriores = dijkstra(grafo, "S")
-
-for nodo, distancia in distancias.items():
-    print(nodo, "->", distancia)
-
-def obtener_ruta(anterior, origen, destino):
-    ruta = []
-    actual = destino
-
-    while actual is not None:
-        ruta.append(actual)
-
-        if actual == origen:
-            break
-
-        actual = anterior[actual]
-
-    ruta.reverse()
-
-    return ruta
+    return float('inf'), []
 
 
-distancias, anteriores = dijkstra(grafo, "S")
+# Pedido 1: recoger en F -> entregar en T
+coste1a, ruta1a = dijkstra(grafo, 'S', 'F')
+coste1b, ruta1b = dijkstra(grafo, 'F', 'T')
 
-for destino in ["B", "C", "F", "T", "D", "E"]:
-    ruta = obtener_ruta(anteriores, "S", destino)
+# Pedido 2: recoger en F -> entregar en E
+coste2, ruta2 = dijkstra(grafo, 'F', 'E')
 
-    print(
-        f"S -> {destino}: "
-        f"{ruta} = {distancias[destino]} minutos"
-    )
+# Pedido 3: recoger en T -> entregar en D
+coste3, ruta3 = dijkstra(grafo, 'T', 'D')
+
+print("S -> F")
+print(ruta1a, "Coste:", coste1a)
+
+print("\nF -> E")
+print(ruta2, "Coste:", coste2)
+
+print("\nE -> T")
+coste_et, ruta_et = dijkstra(grafo, 'E', 'T')
+print(ruta_et, "Coste:", coste_et)
+
+print("\nT -> D")
+print(ruta3, "Coste:", coste3)
+
+coste_total = coste1a + coste2 + coste_et + coste3
+
+print("\nRuta final:")
+print("S -> F -> E -> T -> D")
+print("Coste total =", coste_total)
